@@ -61,7 +61,7 @@ class NotificationBar {
         }
     }
     
-    func show (message: String, background: UIColor = UIColor.redColor(), permenantly permanent: Bool = false, loadingIndicator: Bool = false, completion: (() -> Void)?) {
+    func show (message: String, background: UIColor = UIColor.redColor(), permenantly permanent: Bool = false, loadingIndicator: Bool = false, completion: (() -> Void)? = nil) {
         if messageView == nil, let activeViewController = activeViewController {
             backgroundView = UIView(frame: activeViewController.view.frame)
             backgroundView.backgroundColor = UIColor.clearColor()
@@ -125,7 +125,7 @@ class NotificationBar {
         }
     }
     
-    func hide (completion: (() -> Void)?) {
+    func hide (completion: (() -> Void)? = nil) {
         guard let messageView = messageView, let backgroundView = backgroundView else { return }
         UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             
