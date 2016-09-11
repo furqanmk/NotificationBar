@@ -1,106 +1,105 @@
 //
-//  ErrorView.swift
-//  Kabridge
+//  NotificationBar.swift
 //
-//  Created by Furqan Muhammad Khan on 17/05/2016.
-//  Copyright © 2016 VitalSoft. All rights reserved.
+// The MIT License (MIT)
 //
+// Copyright (c) 2016 Furqan Muhammad Khan <furqanmk9>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
-import UIKit
-
-//
-//  ICViewController.swift
-//  DolmenMall
-//
-//  Created by Furqan Khan on 02/07/2015.
-//  Copyright (c) 2015 Panacloud. All rights reserved.
-//
 
 import UIKit
 
 class NotificationBar {
     
-    private static var activeViewController: UIViewController {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let window = appDelegate.window!
-        let navigationController = window.rootViewController as! UINavigationController
-        let activeVC = navigationController.visibleViewController!
-        return activeVC
+    static var sharedBar: NotificationBar = NotificationBar()
+    
+    private var activeViewController: UIViewController? {
+        let appDel = UIApplication.sharedApplication().delegate as? AppDelegate
+        let window = appDel?.window
+        let navigationController = window?.rootViewController as? UINavigationController
+        return navigationController?.visibleViewController
     }
-    private static var messageView: UIView!
-    private static var bgView: UIView!
- 
-    private static var startingY: CGFloat {
-        if activeViewController.navigationController?.navigationBarHidden == true {
-            return -70
-        }
-        else {
-            return -2
+    
+    private var startY: CGFloat {
+        if ((activeViewController?.navigationController?.navigationBarHidden) ?? false) {
+            return -70.0
+        } else {
+            return -2.0
         }
     }
     
-    private static var viewHeight: CGFloat {
-        if activeViewController.navigationController?.navigationBarHidden == true {
-            return 50
-        }
-        else {
-            return 30
-        }
-    }
-    
-    private static var positionDisplacement: CGFloat {
-        if activeViewController.navigationController?.navigationBarHidden == true {
-            return 10
-        }
-        else {
-            return 0
+    private var height: CGFloat {
+        if ((activeViewController?.navigationController?.navigationBarHidden) ?? false) {
+            return 50.0
+        } else {
+            return 30.0
         }
     }
     
-    static func showWithMessage(message: String, backgroundColor: UIColor?, permanently permanent: Bool, showLoadingIndicator: Bool, onCompletion: (()->())?) {
-        if messageView == nil {
+    private var displacment: CGFloat {
+        if ((activeViewController?.navigationController?.navigationBarHidden) ?? false) {
+            return 10.0
+        } else {
+            return 0.0
+        }
+    }
+    
+    func show (message: String, background: UIColor = UIColor.redColor(), permenantly permanent: Bool = false, loadingIndicator: Bool = false, completion: (() -> Void)?) {
+        if messageView == nil, let activeViewController = activeViewController {
+            backgroundView = UIView(frame: activeViewController.view.frame)
+            backgroundView.backgroundColor = UIColor.clearColor()
+            activeViewController.view.addSubview(backgroundView)
             
-            bgView = UIView(frame: activeViewController.view.frame)
-            bgView.backgroundColor = UIColor(white: 0, alpha: 0)
-            activeViewController.view.addSubview(bgView)
+            let font = UIFont.systemFontOfSize(16.0)
+            let attributes = [NSFontAttributeName: font]
+            let size = (message as NSString).sizeWithAttributes(attributes)
+            let lines = Int(size.width / activeViewController.view.frame.width)
             
-            let font = UIFont(name: "Century Gothic", size: 16)
-            let fontAttributes = [NSFontAttributeName: font!]
-            let fontSize = (message as NSString).sizeWithAttributes(fontAttributes)
-            let fontHeight = fontSize.height
-            let lines = Int(fontSize.width / activeViewController.view.frame.width)
+            messageView = UIView(frame: CGRectMake(0, startY, activeViewController.view.frame.width, height + CGFloat(lines) * size.height))
+            messageView.backgroundColor = background
+            messageView.alpha = 0
             
-            self.messageView = UIView(frame: CGRectMake(0, startingY, activeViewController.view.frame.width, viewHeight + CGFloat(lines)*fontHeight))
-            if let color = backgroundColor {
-                
-                self.messageView.backgroundColor = color
-            } else {
-                self.messageView.backgroundColor = UIColor.redColor()
-            }
-            self.messageView.alpha = 0
-
-            let messageLabel = UILabel(frame: CGRect(origin: CGPointZero, size: CGSize(width: messageView.bounds.width, height: messageView.bounds.height)))
-            messageLabel.center = messageView.center
-            messageLabel.text = message
-            messageLabel.font = font
-            messageLabel.numberOfLines = 0
-            messageLabel.lineBreakMode = NSLineBreakMode.ByWordWrapping
-            messageLabel.textAlignment = NSTextAlignment.Center
-            messageLabel.textColor = UIColor.whiteColor()
-            self.messageView.addSubview(messageLabel)
+            let label = UILabel(frame: CGRect(origin: CGPointZero, size: CGSize(width: messageView.bounds.width, height: messageView.bounds.height))).then({
+                $0.center = messageView.center
+                $0.text = message
+                $0.font = font
+                $0.numberOfLines = 0
+                $0.lineBreakMode = NSLineBreakMode.ByWordWrapping
+                $0.textAlignment = NSTextAlignment.Center
+                $0.textColor = UIColor.whiteColor()
+            })
+            messageView.addSubview(label)
             
-            if showLoadingIndicator {
+            
+            if loadingIndicator {
                 let indicator = UIActivityIndicatorView(activityIndicatorStyle: .White)
                 indicator.center.x = messageView.frame.width - indicator.frame.width
-                indicator.center.y = messageView.frame.height / 2 + positionDisplacement
+                indicator.center.y = messageView.frame.height / 2 + displacment
                 self.messageView.addSubview(indicator)
                 indicator.startAnimating()
             }
             
-            activeViewController.view.addSubview(self.messageView)
+            activeViewController.view.addSubview(messageView)
             
             UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                bgView.alpha = 0.2
+                self.backgroundView.alpha = 0.2
                 self.messageView.alpha = 1
                 self.messageView.center.y += 65
                 
@@ -111,46 +110,56 @@ class NotificationBar {
                     
                     self.messageView.alpha = 0
                     self.messageView.center.y -= 65
-                    bgView.alpha = 0
+                    self.backgroundView.alpha = 0
                     
                     }, completion:
                     {
                         _ in
-                        self.bgView.removeFromSuperview()
-                        self.bgView = nil
+                        self.backgroundView.removeFromSuperview()
+                        self.backgroundView = nil
                         self.messageView.removeFromSuperview()
                         self.messageView = nil
-                        if let _completion = onCompletion {
-                            _completion()
-                        }
+                        completion?()
                 })
             }
-            
         }
     }
     
-    static func hide(onCompletion: (()->())?) {
-        if messageView != nil {
+    func hide (completion: (() -> Void)?) {
+        guard let messageView = messageView, let backgroundView = backgroundView else { return }
+        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             
-            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                
-                messageView.alpha = 0
-                messageView.center.y -= 65
-                bgView.alpha = 0
-                
-                }, completion:
-                {
-                    _ in
-                    bgView.removeFromSuperview()
-                    bgView = nil
-                    messageView.removeFromSuperview()
-                    messageView = nil
-                    if let _completion = onCompletion {
-                        _completion()
-                    }
-            })
-        }
+            messageView.alpha = 0
+            messageView.center.y -= 65
+            backgroundView.alpha = 0
+            
+            }, completion:
+            {
+                _ in
+                backgroundView.removeFromSuperview()
+                self.backgroundView = nil
+                messageView.removeFromSuperview()
+                self.messageView = nil
+                completion?()
+        })
     }
+    
+    
+    private var messageView: UIView!, backgroundView: UIView!
+    
+    private init () {
+    } //To restrict initialization
     
 }
+
+public protocol Then {}
+
+extension Then where Self: AnyObject {
+    public func then(@noescape block: Self -> Void) -> Self {
+        block(self)
+        return self
+    }
+}
+
+extension NSObject: Then {}
 
