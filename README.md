@@ -78,7 +78,7 @@ Furqan Khan | [@furqanmk9](https://twitter.com/furqanmk9)
 
 ### License
 
- Copyright (c) 2016 Furqan Muhammad Khan <furqanmk9>
+ Copyright (c) 2018 Furqan Muhammad Khan <furqanmk9>
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
