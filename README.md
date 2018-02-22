@@ -9,14 +9,14 @@
 
 ## Installation
 
-### Cocoapods
+#### Cocoapods
 Paste the following line to your Podfile:
 ```ruby
 pod 'NotificationBar', :git => 'https://github.com/furqanmk/NotificationBar.git'
 ```
 CocoaPods release coming soon.
 
-### Manual
+#### Manual
 Drag and drop files from the `Source` folder.
 
 ## Usage
