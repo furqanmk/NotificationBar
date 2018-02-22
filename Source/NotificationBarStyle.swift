@@ -25,6 +25,12 @@ public enum NotificationBarStyle {
         let backgroundColor: UIColor
         let isLoaderHidden: Bool
         let dismiss: NotificationBarDismiss
+        
+        public init(backgroundColor: UIColor, isLoaderHidden: Bool, dismiss: NotificationBarDismiss) {
+            self.backgroundColor = backgroundColor
+            self.isLoaderHidden = isLoaderHidden
+            self.dismiss = dismiss
+        }
     }
     
     func config() -> VisualConfig {
