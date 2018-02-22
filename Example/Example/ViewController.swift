@@ -11,15 +11,44 @@ import NotificationBar
 
 class ViewController: UIViewController {
     
-    @IBAction func showLoading(_ sender: Any) {
-        let nf = NotificationBar(over: self, text: "The content is being loaded...", style: .loading)
-        nf.show()
+    private var loadingNotificationBar: NotificationBar?
+    private var isNotificationVisible = false {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
     }
     
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    @IBAction func showLoading(_ sender: Any) {
+        isNotificationVisible = true
+        loadingNotificationBar = NotificationBar(over: self, text: "Tick, tick... It's loading...", style: .loading) {
+            self.isNotificationVisible = false
+        }
+        loadingNotificationBar?.show()
     }
+    
+    @IBAction func stopLoading(_ sender: Any) {
+        loadingNotificationBar?.dismiss()
+    }
+    
+    @IBAction func showSuccess(_ sender: Any) {
+        isNotificationVisible = true
+        NotificationBar(over: self, text: "Yay! Everything went good :)", style: .success) {
+            self.isNotificationVisible = false
+            }
+            .show()
+    }
+    
+    @IBAction func showError(_ sender: Any) {
+        isNotificationVisible = true
+        NotificationBar(over: self, text: "Uh-oh! Something broke :/", style: .error) {
+            self.isNotificationVisible = false
+            }
+            .show()
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return isNotificationVisible
+    }
+    
 }
 
