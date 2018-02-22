@@ -10,11 +10,13 @@
 ## Installation
 Right now you can drag and drop files from the `Source` folder. I will release it on CocoaPods soon.
 
-### Manual
-
 ## Usage
 
 Make an instance of `NotificationBar` with desired properties in the initializer and `show()` method. Don't forget to call the `dismiss()` method if you passed `.loading` for style in the init.
+
+```swift
+NotificationBar(over: self, text: "Here goes your message", style: .success).show()
+```
 
 ### Customizations
 
