@@ -1,9 +1,8 @@
 Pod::Spec.new do |s|
   s.name = 'NotificationBar'
   s.version = '0.1'
-  s.tag = '0.1'
   s.swift_version = '4.0'
-  s.license = 'MIT'
+  s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.summary = 'Notification bar for iOS apps'
   s.homepage = 'https://github.com/furqanmk/NotificationBar'
   s.social_media_url = 'http://twitter.com/furqanmk9'
