@@ -1,0 +1,19 @@
+{
+  "name": "NotificationBar",
+  "version": "0.1",
+  "license": "MIT",
+  "summary": "Notification bar for iOS apps",
+  "homepage": "https://github.com/furqanmk/NotificationBar",
+  "social_media_url": "http://twitter.com/furqanmk9",
+  "authors": {
+    "Furqan Khan": "furqanmk@outlook.com"
+  },
+  "source": {
+    "git": "https://github.com/furqanmk/NotificationBar.git",
+    "tag": "0.1"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "Source/*.swift"
+}

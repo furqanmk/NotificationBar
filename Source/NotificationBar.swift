@@ -26,140 +26,132 @@
 
 import UIKit
 
-class NotificationBar {
+public class NotificationBar {
     
-    static var sharedBar: NotificationBar = NotificationBar()
+    /// Use to set universal configuration for the Notification Bar
+    public static let sharedConfig = NotificationBarConfiguration()
     
-    private var activeViewController: UIViewController? {
-        let appDel = UIApplication.sharedApplication().delegate as? AppDelegate
-        let window = appDel?.window
-        let navigationController = window?.rootViewController as? UINavigationController
-        return navigationController?.visibleViewController
+    private let presenter: UIViewController
+    private let text: String
+    private let style: NotificationBarStyle
+    private let onDismiss: (() -> ())?
+    private var view: UIView!
+    
+    // MARK: - Initializer
+    
+    /// Initialize the NotificationBar
+    ///
+    /// - Parameters:
+    ///   - presenter: The view controller which presents the notification bar
+    ///   - text: The text to be shown inside the notification bar
+    ///   - style: The style of the notification bar
+    ///   - onDismiss: Method of dismissing the notification bar
+    public init(over presenter: UIViewController,
+                text: String,
+                style: NotificationBarStyle,
+                onDismiss: (() -> ())? = nil) {
+        
+        self.presenter = presenter
+        self.text = text
+        self.style = style
+        self.onDismiss = onDismiss
+        setupView()
     }
     
-    private var startY: CGFloat {
-        if ((activeViewController?.navigationController?.navigationBarHidden) ?? false) {
-            return -70.0
-        } else {
-            return -2.0
+    // MARK: - Public Methods
+    
+    /// Present the notification bar.
+    /// **Don't forget to dismiss if dismiss style is .manual**
+    public func show() {
+        animateIn()
+    }
+    
+    /// Dismiss the notification bar in case the dismiss method is .manual
+    public func dismiss() {
+        animateOut(withDelay: 0)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupView() {
+
+        let width = presenter.view.frame.width
+        let height = NotificationBar.sharedConfig.padding + textHeight()
+        view = UIView(frame: CGRect(x: 0,
+                                    y: -height,
+                                    width: width,
+                                    height: height))
+        view?.backgroundColor = style.config().backgroundColor
+        view?.alpha = 0
+        presenter.view.addSubview(view)
+        
+        setupLabel()
+        setupLoader()
+    }
+    
+    private func setupLabel() {
+        
+        let padding = NotificationBar.sharedConfig.padding
+        let font = NotificationBar.sharedConfig.font
+        let textColor = NotificationBar.sharedConfig.textColor
+        
+        let label = UILabel(frame: CGRect(origin: .zero,
+                                          size: CGSize(width: view.bounds.width - padding,
+                                                       height: view.bounds.height - padding)))
+        label.center = view.center
+        label.text = text
+        label.font = font
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.textAlignment = .center
+        label.textColor = textColor
+        view.addSubview(label)
+    }
+    
+    private func setupLoader() {
+        guard !style.config().isLoaderHidden else {
+            return
         }
+        let loader = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        loader.center.x = view.frame.width - loader.frame.width
+        loader.center.y = view.frame.height / 2
+        view.addSubview(loader)
+        loader.startAnimating()
     }
     
-    private var height: CGFloat {
-        if ((activeViewController?.navigationController?.navigationBarHidden) ?? false) {
-            return 50.0
-        } else {
-            return 30.0
-        }
-    }
-    
-    private var displacment: CGFloat {
-        if ((activeViewController?.navigationController?.navigationBarHidden) ?? false) {
-            return 10.0
-        } else {
-            return 0.0
-        }
-    }
-    
-    func show (message: String, background: UIColor = UIColor.redColor(), permenantly permanent: Bool = false, loadingIndicator: Bool = false, completion: (() -> Void)? = nil) {
-        if messageView == nil, let activeViewController = activeViewController {
-            backgroundView = UIView(frame: activeViewController.view.frame)
-            backgroundView.backgroundColor = UIColor.clearColor()
-            activeViewController.view.addSubview(backgroundView)
-            
-            let font = UIFont.systemFontOfSize(16.0)
-            let attributes = [NSFontAttributeName: font]
-            let size = (message as NSString).sizeWithAttributes(attributes)
-            let lines = Int(size.width / activeViewController.view.frame.width)
-            
-            messageView = UIView(frame: CGRectMake(0, startY, activeViewController.view.frame.width, height + CGFloat(lines) * size.height))
-            messageView.backgroundColor = background
-            messageView.alpha = 0
-            
-            let label = UILabel(frame: CGRect(origin: CGPointZero, size: CGSize(width: messageView.bounds.width, height: messageView.bounds.height))).then({
-                $0.center = messageView.center
-                $0.text = message
-                $0.font = font
-                $0.numberOfLines = 0
-                $0.lineBreakMode = NSLineBreakMode.ByWordWrapping
-                $0.textAlignment = NSTextAlignment.Center
-                $0.textColor = UIColor.whiteColor()
-            })
-            messageView.addSubview(label)
-            
-            
-            if loadingIndicator {
-                let indicator = UIActivityIndicatorView(activityIndicatorStyle: .White)
-                indicator.center.x = messageView.frame.width - indicator.frame.width
-                indicator.center.y = messageView.frame.height / 2 + displacment
-                self.messageView.addSubview(indicator)
-                indicator.startAnimating()
+    private func animateIn() {
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: { [weak self] in
+            guard let strongSelf = self else {
+                return
             }
-            
-            activeViewController.view.addSubview(messageView)
-            
-            UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                self.backgroundView.alpha = 0.2
-                self.messageView.alpha = 1
-                self.messageView.center.y += 65
-                
-                }, completion: nil)
-            
-            if !permanent {
-                UIView.animateWithDuration(0.5, delay: 2.0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-                    
-                    self.messageView.alpha = 0
-                    self.messageView.center.y -= 65
-                    self.backgroundView.alpha = 0
-                    
-                    }, completion:
-                    {
-                        _ in
-                        self.backgroundView.removeFromSuperview()
-                        self.backgroundView = nil
-                        self.messageView.removeFromSuperview()
-                        self.messageView = nil
-                        completion?()
-                })
-            }
+            strongSelf.view.alpha = 1
+            strongSelf.view.center.y += strongSelf.view.frame.height
+        }, completion: nil)
+        
+        if style.config().dismiss == .auto {
+            animateOut(withDelay: NotificationBar.sharedConfig.duration)
         }
     }
     
-    func hide (completion: (() -> Void)? = nil) {
-        guard let messageView = messageView, let backgroundView = backgroundView else { return }
-        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            
-            messageView.alpha = 0
-            messageView.center.y -= 65
-            backgroundView.alpha = 0
-            
-            }, completion:
-            {
-                _ in
-                backgroundView.removeFromSuperview()
-                self.backgroundView = nil
-                messageView.removeFromSuperview()
-                self.messageView = nil
-                completion?()
+    private func animateOut(withDelay delay: TimeInterval) {
+        UIView.animate(withDuration: 0.5, delay: delay, options: .curveEaseOut, animations: { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.view.alpha = 0
+            strongSelf.view.center.y -= strongSelf.view.frame.height
+        }, completion: { [weak self] _ in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.view.removeFromSuperview()
+            strongSelf.onDismiss?()
         })
     }
     
-    
-    private var messageView: UIView!, backgroundView: UIView!
-    
-    private init () {
-    } //To restrict initialization
-    
-}
-
-public protocol Then {}
-
-extension Then where Self: AnyObject {
-    public func then(@noescape block: Self -> Void) -> Self {
-        block(self)
-        return self
+    private func textHeight() -> CGFloat {
+        let font = NotificationBar.sharedConfig.font
+        let size = (text as NSString).size(withAttributes: [.font: font])
+        return size.height * (size.width / presenter.view.frame.width)
     }
 }
-
-extension NSObject: Then {}
-

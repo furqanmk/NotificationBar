@@ -7,19 +7,19 @@
 //
 
 import UIKit
+import NotificationBar
 
 class ViewController: UIViewController {
+    
+    @IBAction func showLoading(_ sender: Any) {
+        let nf = NotificationBar(over: self, text: "The content is being loaded...", style: .loading)
+        nf.show()
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
 }
 
