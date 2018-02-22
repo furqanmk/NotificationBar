@@ -8,7 +8,11 @@
 <image src="https://media.giphy.com/media/9PgwWOfOHReECsYz29/giphy.gif" width="400"/>
 
 ## Installation
-Right now you can drag and drop files from the `Source` folder. I will release it on CocoaPods soon.
+
+```ruby
+pod 'NotificationBar', :git => 'https://github.com/furqanmk/NotificationBar.git'
+```
+CocoaPods release coming soon.
 
 ## Usage
 
