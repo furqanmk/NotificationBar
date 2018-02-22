@@ -3,6 +3,10 @@
 ![iOS 8+](https://img.shields.io/badge/iOS-8%2B-blue.svg?style=flat)
 ![Swift 4](https://img.shields.io/badge/Swift-4-orange.svg?style=flat)
 
+## Default Look
+
+<image src="https://media.giphy.com/media/9PgwWOfOHReECsYz29/giphy.gif" width="400"/>
+
 ## Installation
 Right now you can drag and drop files from the `Source` folder. I will release it on CocoaPods soon.
 
