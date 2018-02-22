@@ -30,15 +30,15 @@ public enum NotificationBarStyle {
     func config() -> VisualConfig {
         switch self {
         case .loading:
-            return VisualConfig(backgroundColor: .orange,
+            return VisualConfig(backgroundColor: NotificationBar.sharedConfig.loadingColor,
                                 isLoaderHidden: false,
                                 dismiss: .manual)
         case .success:
-            return VisualConfig(backgroundColor: .green,
+            return VisualConfig(backgroundColor: NotificationBar.sharedConfig.successColor,
                                 isLoaderHidden: true,
                                 dismiss: .auto)
         case .error:
-            return VisualConfig(backgroundColor: .red,
+            return VisualConfig(backgroundColor: NotificationBar.sharedConfig.errorColor,
                                 isLoaderHidden: true,
                                 dismiss: .auto)
         case .custom(let style):

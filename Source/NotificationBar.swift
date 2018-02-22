@@ -95,10 +95,10 @@ public class NotificationBar {
         let font = NotificationBar.sharedConfig.font
         let textColor = NotificationBar.sharedConfig.textColor
         
-        let label = UILabel(frame: CGRect(origin: .zero,
+        let label = UILabel(frame: CGRect(origin: CGPoint(x: padding / 2,
+                                                          y: padding / 2),
                                           size: CGSize(width: view.bounds.width - padding,
                                                        height: view.bounds.height - padding)))
-        label.center = view.center
         label.text = text
         label.font = font
         label.numberOfLines = 0
@@ -120,12 +120,9 @@ public class NotificationBar {
     }
     
     private func animateIn() {
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: { [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.view.alpha = 1
-            strongSelf.view.center.y += strongSelf.view.frame.height
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
+            self.view.alpha = 1
+            self.view.center.y += self.view.frame.height
         }, completion: nil)
         
         if style.config().dismiss == .auto {
@@ -134,24 +131,19 @@ public class NotificationBar {
     }
     
     private func animateOut(withDelay delay: TimeInterval) {
-        UIView.animate(withDuration: 0.5, delay: delay, options: .curveEaseOut, animations: { [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.view.alpha = 0
-            strongSelf.view.center.y -= strongSelf.view.frame.height
-        }, completion: { [weak self] _ in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.view.removeFromSuperview()
-            strongSelf.onDismiss?()
+        UIView.animate(withDuration: 0.5, delay: delay, options: .curveEaseOut, animations: {
+            self.view.alpha = 0
+            self.view.center.y -= self.view.frame.height
+        }, completion: { _ in
+            self.view.removeFromSuperview()
+            self.onDismiss?()
         })
     }
     
     private func textHeight() -> CGFloat {
         let font = NotificationBar.sharedConfig.font
         let size = (text as NSString).size(withAttributes: [.font: font])
-        return size.height * (size.width / presenter.view.frame.width)
+        let lines = Int(size.width / presenter.view.frame.width)
+        return 50.0 + CGFloat(lines) * size.height
     }
 }
