@@ -56,6 +56,7 @@ public class NotificationBar {
         self.style = style
         self.onDismiss = onDismiss
         setupView()
+        subscribeForRotationChanges()
     }
     
     // MARK: - Public Methods
@@ -72,6 +73,8 @@ public class NotificationBar {
     }
     
     // MARK: - Private Methods
+    
+    // MARK: Setup
     
     private func setupView() {
 
@@ -119,6 +122,8 @@ public class NotificationBar {
         loader.startAnimating()
     }
     
+    // MARK: Animation
+    
     private func animateIn() {
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut, animations: {
             self.view.alpha = 1
@@ -140,10 +145,30 @@ public class NotificationBar {
         })
     }
     
+    // MARK: Text Height
+    
     private func textHeight() -> CGFloat {
         let font = NotificationBar.sharedConfig.font
         let size = (text as NSString).size(withAttributes: [.font: font])
         let lines = Int(size.width / presenter.view.frame.width)
         return 50.0 + CGFloat(lines) * size.height
+    }
+    
+    // MARK: Rotation
+    
+    private func subscribeForRotationChanges() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleRotation),
+                                               name: NSNotification.Name.UIDeviceOrientationDidChange,
+                                               object: nil)
+    }
+    
+    @objc private func handleRotation() {
+        setupView()
+        animateIn()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }

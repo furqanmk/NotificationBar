@@ -1,7 +1,11 @@
 {
   "name": "NotificationBar",
   "version": "0.1",
-  "license": "MIT",
+  "swift_version": "4.0",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
   "summary": "Notification bar for iOS apps",
   "homepage": "https://github.com/furqanmk/NotificationBar",
   "social_media_url": "http://twitter.com/furqanmk9",
