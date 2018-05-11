@@ -58,7 +58,7 @@ It's important to remember that if the dismiss property of the NotificationBar i
 
 ## TODO
 
-- [ ] Add Cocoapods support
+- [x] Add Cocoapods support
 - [ ] Add Carthage support
 - [ ] Add Swift Package Manager support
 
