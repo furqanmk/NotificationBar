@@ -91,7 +91,7 @@ public class NotificationBar {
     private func setupView() {
 
         let width = presenter.view.frame.width
-        let height = NotificationBar.statusBarHeight + NotificationBar.sharedConfig.padding + textHeight()
+        let height = NotificationBar.statusBarHeight + NotificationBar.sharedConfig.bottomPadding + textHeight()
         view = UIView(frame: CGRect(x: 0,
                                     y: -height,
                                     width: width,
@@ -107,7 +107,7 @@ public class NotificationBar {
     
     private func setupLabel() {
         
-        let padding = NotificationBar.sharedConfig.padding
+        let bottomPadding = NotificationBar.sharedConfig.bottomPadding
         let font = NotificationBar.sharedConfig.font
         let textColor = NotificationBar.sharedConfig.textColor
         
@@ -119,7 +119,7 @@ public class NotificationBar {
         label.textAlignment = .center
         label.textColor = textColor
         label.sizeToFit()
-        label.center = .init(x: view.bounds.midX, y: view.bounds.maxY - label.bounds.height - padding)
+        label.center = .init(x: view.bounds.midX, y: view.bounds.maxY - label.bounds.height - bottomPadding)
 
         view.addSubview(label)
     }
