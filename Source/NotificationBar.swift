@@ -28,6 +28,18 @@ import UIKit
 
 public class NotificationBar {
     
+    public static var statusBarHeight: CGFloat {
+        let bounds = UIScreen.main.bounds
+        let height = max(bounds.height, bounds.width)
+        if case 0..<812 = height {
+            /// There is a regular status bar, and not a notch.
+            return 25.0
+        } else {
+            /// There is a notch.
+            return 50.0
+        }
+    }
+    
     /// Use to set universal configuration for the Notification Bar
     public static let sharedConfig = NotificationBarConfiguration()
     
@@ -79,13 +91,14 @@ public class NotificationBar {
     private func setupView() {
 
         let width = presenter.view.frame.width
-        let height = NotificationBar.sharedConfig.padding + textHeight()
+        let height = NotificationBar.statusBarHeight + NotificationBar.sharedConfig.bottomPadding + textHeight()
         view = UIView(frame: CGRect(x: 0,
                                     y: -height,
                                     width: width,
                                     height: height))
-        view?.backgroundColor = style.config().backgroundColor
-        view?.alpha = 0
+        view.backgroundColor = style.config().backgroundColor
+        view.alpha = 0
+        
         presenter.view.addSubview(view)
         
         setupLabel()
@@ -94,20 +107,20 @@ public class NotificationBar {
     
     private func setupLabel() {
         
-        let padding = NotificationBar.sharedConfig.padding
+        let bottomPadding = NotificationBar.sharedConfig.bottomPadding
         let font = NotificationBar.sharedConfig.font
         let textColor = NotificationBar.sharedConfig.textColor
         
-        let label = UILabel(frame: CGRect(origin: CGPoint(x: padding / 2,
-                                                          y: padding / 2),
-                                          size: CGSize(width: view.bounds.width - padding,
-                                                       height: view.bounds.height - padding)))
+        let label = UILabel(frame: .zero)
         label.text = text
         label.font = font
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         label.textAlignment = .center
         label.textColor = textColor
+        label.sizeToFit()
+        label.center = .init(x: view.bounds.midX, y: view.bounds.maxY - label.bounds.height - bottomPadding)
+
         view.addSubview(label)
     }
     
@@ -150,8 +163,8 @@ public class NotificationBar {
     private func textHeight() -> CGFloat {
         let font = NotificationBar.sharedConfig.font
         let size = (text as NSString).size(withAttributes: [.font: font])
-        let lines = Int(size.width / presenter.view.frame.width)
-        return 50.0 + CGFloat(lines) * size.height
+        let lines = Int(size.width / presenter.view.frame.width) + 1
+        return CGFloat(lines) * size.height
     }
     
     // MARK: Rotation
