@@ -1,3 +1,5 @@
+![NotificationBar](https://github.com/Tobaloidee/NotificationBar/blob/master/logo/logotype.png)
+
 **NotificationBar** is a simple module that allows you to show notifications or alerts. It's simple to use yet very customizable. Just make an instance and call a method to show, that's it!
 
 ![iOS 8+](https://img.shields.io/badge/iOS-8%2B-blue.svg?style=flat)
