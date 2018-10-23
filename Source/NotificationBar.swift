@@ -101,11 +101,10 @@ public class NotificationBar {
         
         presenter.view.addSubview(view)
         
-        setupLabel()
-        setupLoader()
+        setupLabelAndLoader()
     }
     
-    private func setupLabel() {
+    private func setupLabelAndLoader() {
         
         let bottomPadding = NotificationBar.sharedConfig.bottomPadding
         let font = NotificationBar.sharedConfig.font
@@ -120,17 +119,18 @@ public class NotificationBar {
         label.textColor = textColor
         label.sizeToFit()
         label.center = .init(x: view.bounds.midX, y: view.bounds.maxY - label.bounds.height - bottomPadding)
-
+        
         view.addSubview(label)
+        setupLoader(labelCenterY: label.center.y)
     }
     
-    private func setupLoader() {
+    private func setupLoader(labelCenterY: CGFloat) {
         guard !style.config().isLoaderHidden else {
             return
         }
         let loader = UIActivityIndicatorView(activityIndicatorStyle: .white)
         loader.center.x = view.frame.width - loader.frame.width
-        loader.center.y = view.frame.height / 2
+        loader.center.y = labelCenterY
         view.addSubview(loader)
         loader.startAnimating()
     }
